@@ -472,7 +472,8 @@ def generate_launch_script(recipe: dict[str, Any], overrides: dict[str, Any], is
         command = '\n'.join(filtered_lines)
 
     # Remove trailing backslash if present
-    if command.endswith('\\\n'):
+    command = command.rstrip()
+    if command.endswith('\\'):
         command = command.rstrip('\\\n').rstrip()
     
     # Append extra args if provided (after --)
@@ -910,7 +911,7 @@ Examples:
     build_args = recipe.get("build_args", [])
     
     # Parse nodes - check command line first, then .env file, then autodiscover
-    nodes = parse_nodes(args.nodes) if not args.solo else None
+    nodes = parse_nodes(args.nodes) if not args.solo else []
     nodes_from_env = False
     eth_if = None
     ib_if = None
