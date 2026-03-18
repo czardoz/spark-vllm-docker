@@ -151,6 +151,28 @@ For periodic maintenance, I recommend using a filter: `docker builder prune --fi
 
 ### 2026-03-17
 
+#### EXPERIMENTAL Intel/Qwen3.5-397B-A17B-int4-AutoRound Recipe
+
+You can run full 397B Qwen3.5 model on just two Sparks with vision and full context, however you need to make sure your Sparks don't run anything extra that can take a lot of RAM. That means that you don't want to log into the graphical interface or use remote desktop. Connect to the head node via ssh.
+
+Alternatively, you can run in non-graphical mode (runlevel 3) by using `sudo systemctl isolate multi-user.target` to switch (you can use `sudo systemctl set-default graphical.target` to switch back to graphical mode), however this is known to reduce performance a bit.
+
+You can run the model with the following command on the head node:
+
+```bash
+./run-recipe.sh qwen3.5-397b-int4-autoround.yaml --no-ray
+```
+
+Please, note `--no-ray` is necessary to fit full context. It also improves inference speed by ~1 t/s.
+By default it will try to allocate 112 GB for vLLM on each node. You can change this by changing `--gpu-memory-utilization` (e.g. `--gpu-memory-utilization 113`), but please be aware that it uses GB instead of percentage **for this recipe**. 
+
+**KNOWN ISSUES**:
+
+1. The current firmware may cause sudden shutdown event on one or both Sparks during heavy inference. If you have this issue, you will need to lower GPU clock frequency on the affected unit(s), e.g. `sudo nvidia-smi -lgc 200,2150`. This command will reduce max GPU frequency to 2150 MHz. You can play with higher values to see what works for you (default is 2411 MHz, but can boost to 3000 MHz). Please note that this setting only survives until the next reboot, but can be applied at any time.
+2. You will need to use the new `--no-ray` argument to fit full context.
+3. If the model gets stuck loading weights, clearing the cache on both nodes can "unstuck" it. Use `sudo sh -c 'sync; echo 3 > /proc/sys/vm/drop_caches'` to clear the cache. 
+
+
 #### Major Cluster Orchestration Refactoring
 
 Significantly refactored the internal cluster startup logic in `launch-cluster.sh`:
