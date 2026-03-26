@@ -1338,6 +1338,8 @@ Examples:
             cmd_parts.extend(["--pids-limit", str(args.pids_limit)])
         if args.shm_size_gb:
             cmd_parts.extend(["--shm-size-gb", str(args.shm_size_gb)])
+        if args.config_file:
+            cmd_parts.extend(["--config", args.config_file])
         cmd_parts.extend(["\\", "\n      --launch-script", "/tmp/tmpXXXXXX.sh"])
         print(" ".join(cmd_parts))
         print()
@@ -1407,6 +1409,9 @@ Examples:
             cmd.extend(["--pids-limit", str(args.pids_limit)])
         if args.shm_size_gb:
             cmd.extend(["--shm-size-gb", str(args.shm_size_gb)])
+
+        if args.config_file:
+            cmd.extend(["--config", args.config_file])
 
         # Add launch script
         cmd.extend(["--launch-script", temp_script])
