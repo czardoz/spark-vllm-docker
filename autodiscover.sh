@@ -346,7 +346,7 @@ detect_copy_hosts() {
             local host_ip
             host_ip=$(ssh -o ConnectTimeout=3 -o StrictHostKeyChecking=no -o BatchMode=yes "$ip" \
                 "ip -o -f inet addr show $ETH_IF 2>/dev/null | awk '{print \$4}' | head -n1 | cut -d/ -f1" \
-                2>/dev/null)
+                </dev/null 2>/dev/null)
             if [[ -n "$host_ip" && -n "${_SEEN_HOST[$host_ip]}" ]]; then
                 echo "  Skipping $ip (same host as ${_SEEN_HOST[$host_ip]}, ETH_IF: $host_ip)"
                 continue
